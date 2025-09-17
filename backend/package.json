@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon index.js"
   },
-  "author": "",
+  "type": "module",
+  "author": "Shreya Sheth",
   "license": "ISC",
   "description": "",
   "dependencies": {
