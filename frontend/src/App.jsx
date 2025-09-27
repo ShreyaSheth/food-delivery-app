@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import SignUp from "./pages/signUp";
 import SignIn from "./pages/SignIn";
 
+export const serverUrl = "http://localhost:8000";
 function App() {
   return (
     <Routes>
