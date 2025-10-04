@@ -27,15 +27,16 @@ const SignUp = () => {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
     try {
       const values = { firstName, lastName, email, password, mobile, role };
       const res = await axios.post(`${serverUrl}/api/auth/signup`, values, {
         withCredentials: true,
       });
-      console.log(res);
+      console.log("Signup successful:", res.data);
     } catch (error) {
-      console.log(error);
+      console.error("Signup error:", error.response?.data || error.message);
     }
   };
   return (
@@ -57,7 +58,7 @@ const SignUp = () => {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSignUp}>
             <div className="flex flex-col gap-6">
               <div className="flex gap-2">
                 <div className="flex-col">
@@ -117,6 +118,7 @@ const SignUp = () => {
                     required
                   />
                   <Button
+                    type="button"
                     variant="transey"
                     className={
                       "absolute right-3 top-5 text-gray-500 cursor-pointer"
@@ -133,6 +135,7 @@ const SignUp = () => {
                   {["user", "owner", "deliveryBoy"].map((item) => (
                     <Button
                       key={item}
+                      type="button"
                       onClick={() => setRole(item)}
                       className="flex-1 transition-colors cursor-pointer"
                       variant={role === item ? "craveo" : "outline"}
@@ -142,17 +145,13 @@ const SignUp = () => {
                   ))}
                 </div>
               </div>
+              <Button type="submit" className="w-full cursor-pointer">
+                Sign Up
+              </Button>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button
-            type="submit"
-            className="w-full cursor-pointer"
-            onClick={handleSignUp}
-          >
-            Sign Up
-          </Button>
           <Button variant="outline" className="w-full">
             <FcGoogle /> Login with Google
           </Button>

@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
+
 const SignIn = () => {
   const navigate = useNavigate();
 
@@ -20,6 +24,18 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      const values = { email, password };
+      const res = await axios.post(`${serverUrl}/api/auth/signin`, values, {
+        withCredentials: true,
+      });
+      console.log("Signup successful:", res.data);
+    } catch (error) {
+      console.error("Signup error:", error.response?.data || error.message);
+    }
+  };
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <Card className="w-full max-w-sm shadow-lg">
@@ -31,7 +47,7 @@ const SignIn = () => {
           <CardAction>
             <Button
               variant="link"
-              className="text-amber-600"
+              className="text-amber-600 cursor-pointer"
               onClick={() => navigate("/signup")}
             >
               Sign Up
@@ -73,6 +89,12 @@ const SignIn = () => {
                   >
                     {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                   </Button>
+                </div>
+                <div
+                  className="text-right mb-2 text-amber-600 cursor-pointer"
+                  onClick={() => navigate("/forgot-password")}
+                >
+                  Forgot Password?
                 </div>
               </div>
             </div>
