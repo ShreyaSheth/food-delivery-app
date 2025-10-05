@@ -87,51 +87,98 @@ export const signOut = async (req, res) => {
 export const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User does not exist." });
     }
+
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
     user.resetPwdOtp = otp;
     user.otpExpires = Date.now() + 5 * 60 * 1000;
     user.isOtpVerified = false;
     await user.save();
+
     await sendOtpEmail(email, otp);
+    console.log(`OTP sent successfully to ${email}`);
     return res.status(200).json({ message: "OTP sent successfully." });
   } catch (error) {
-    return res.status(500).json({ message: `Send OTP Error: ${error}` });
+    console.error("Send OTP Error:", error);
+    return res
+      .status(500)
+      .json({ message: `Send OTP Error: ${error.message}` });
   }
 };
 
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    const user = await User.findOne({ email });
-    if (!user || user.resetPwdOtp !== otp || user.otpExpires < Date.now()) {
-      return res.status(400).json({ message: "Invalid/Expired OTP" });
+    if (!email || !otp) {
+      return res.status(400).json({ message: "OTP is required." });
     }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+
+    if (!user.resetPwdOtp || user.resetPwdOtp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (user.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+
     user.resetPwdOtp = undefined;
     user.otpExpires = undefined;
     user.isOtpVerified = true;
     await user.save();
+    console.log(`OTP verified successfully for ${email}`);
     return res.status(200).json({ message: "OTP verified successfully." });
   } catch (error) {
-    return res.status(500).json({ message: `Verify OTP Error: ${error}` });
+    console.error("Verify OTP Error:", error);
+    return res
+      .status(500)
+      .json({ message: `Verify OTP Error: ${error.message}` });
   }
 };
 
 export const resetPassword = async (req, res) => {
   try {
-    const { email, newpassword } = req.body;
+    const { email, newPassword } = req.body;
+    if (!newPassword) {
+      return res.status(400).json({ message: "New password is required." });
+    }
     const user = await User.findOne({ email });
-    if (!user || user.isOtpVerified === false) {
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+
+    if (user.isOtpVerified === false) {
       return res.status(400).json({ message: "OTP Verification Required" });
     }
-    user.password = await bcrypt.hash(newpassword, 10);
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 8 characters long, include one uppercase, one lowercase, one number, and one special character.",
+      });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
     user.isOtpVerified = false;
     await user.save();
+    console.log(`Password reset successfully for ${email}`);
     return res.status(200).json({ message: "Password Reset successfully." });
   } catch (error) {
-    return res.status(500).json({ message: `Reset Password Error: ${error}` });
+    console.error("Reset Password Error:", error);
+    return res
+      .status(500)
+      .json({ message: `Reset Password Error: ${error.message}` });
   }
 };

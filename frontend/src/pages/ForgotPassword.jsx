@@ -20,45 +20,57 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirmPassword, setShowConfirmPassword] = useState("");
 
-  const handleSetOtp = async () => {
+  const handleSetOtp = async (e) => {
+    e.preventDefault();
     try {
       const res = await axios.post(
         `${serverUrl}/api/auth/send-otp`,
         { email },
         { withCredentials: true }
       );
-      console.log(res);
+      console.log("OTP sent successfully:", res.data);
       setStep(2);
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Error sending OTP:",
+        error.response?.data || error.message
+      );
     }
   };
 
-  const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
     try {
       const res = await axios.post(
         `${serverUrl}/api/auth/verify-otp`,
         { email, otp },
         { withCredentials: true }
       );
-      console.log(res);
+      console.log("OTP verified successfully:", res.data);
       setStep(3);
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Error verifying OTP:",
+        error.response?.data || error.message
+      );
     }
   };
-  const handleResetPassword = async () => {
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
     if (newPassword !== confirmPassword) return alert("Passwords do not match");
     try {
       const res = await axios.post(
         `${serverUrl}/api/auth/reset-password`,
-        { email },
+        { email, newPassword },
         { withCredentials: true }
       );
-      console.log(res);
+      console.log("Password reset successfully:", res.data);
       navigate("/signin");
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Error resetting password:",
+        error.response?.data || error.message
+      );
     }
   };
   return (
@@ -90,8 +102,9 @@ const ForgotPassword = () => {
                   />
                 </div>
                 <Button
+                  type="button"
                   className="cursor-pointer"
-                  onClick={() => handleSetOtp()}
+                  onClick={handleSetOtp}
                 >
                   Send OTP
                 </Button>
@@ -103,7 +116,7 @@ const ForgotPassword = () => {
                   <Label htmlFor="email">OTP</Label>
                   <Input
                     id="otp"
-                    type="email"
+                    type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter your OTP"
@@ -111,8 +124,9 @@ const ForgotPassword = () => {
                   />
                 </div>
                 <Button
+                  type="button"
                   className="cursor-pointer"
-                  onClick={() => handleVerifyOtp()}
+                  onClick={handleVerifyOtp}
                 >
                   Verify OTP
                 </Button>
@@ -132,6 +146,7 @@ const ForgotPassword = () => {
                       required
                     />
                     <Button
+                      type="button"
                       variant="transey"
                       className={
                         "absolute right-3 top-5 text-gray-500 cursor-pointer"
@@ -154,6 +169,7 @@ const ForgotPassword = () => {
                       required
                     />
                     <Button
+                      type="button"
                       variant="transey"
                       className={
                         "absolute right-3 top-5 text-gray-500 cursor-pointer"
@@ -165,8 +181,9 @@ const ForgotPassword = () => {
                   </div>
                 </div>
                 <Button
+                  type="button"
                   className="cursor-pointer"
-                  onClick={() => handleResetPassword()}
+                  onClick={handleResetPassword}
                 >
                   Reset Password
                 </Button>
