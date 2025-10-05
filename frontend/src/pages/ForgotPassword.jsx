@@ -1,11 +1,13 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { serverUrl } from "@/App";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -13,11 +15,52 @@ const ForgotPassword = () => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirmPassword, setShowConfirmPassword] = useState("");
 
+  const handleSetOtp = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/auth/send-otp`,
+        { email },
+        { withCredentials: true }
+      );
+      console.log(res);
+      setStep(2);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/auth/verify-otp`,
+        { email, otp },
+        { withCredentials: true }
+      );
+      console.log(res);
+      setStep(3);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleResetPassword = async () => {
+    if (newPassword !== confirmPassword) return alert("Passwords do not match");
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/auth/reset-password`,
+        { email },
+        { withCredentials: true }
+      );
+      console.log(res);
+      navigate("/signin");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <Card className="w-full max-w-sm shadow-lg">
@@ -46,7 +89,10 @@ const ForgotPassword = () => {
                     required
                   />
                 </div>
-                <Button className="cursor-pointer" onClick={() => setStep(2)}>
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => handleSetOtp()}
+                >
                   Send OTP
                 </Button>
               </div>
@@ -64,7 +110,10 @@ const ForgotPassword = () => {
                     required
                   />
                 </div>
-                <Button className="cursor-pointer" onClick={() => setStep(3)}>
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => handleVerifyOtp()}
+                >
                   Verify OTP
                 </Button>
               </div>
@@ -77,8 +126,8 @@ const ForgotPassword = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Enter your Password"
                       required
                     />
@@ -115,7 +164,12 @@ const ForgotPassword = () => {
                     </Button>
                   </div>
                 </div>
-                <Button className="cursor-pointer">Reset Password</Button>
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => handleResetPassword()}
+                >
+                  Reset Password
+                </Button>
               </div>
             )}
           </form>

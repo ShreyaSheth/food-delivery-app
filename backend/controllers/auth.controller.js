@@ -102,3 +102,36 @@ export const sendOtp = async (req, res) => {
     return res.status(500).json({ message: `Send OTP Error: ${error}` });
   }
 };
+
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || user.resetPwdOtp !== otp || user.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid/Expired OTP" });
+    }
+    user.resetPwdOtp = undefined;
+    user.otpExpires = undefined;
+    user.isOtpVerified = true;
+    await user.save();
+    return res.status(200).json({ message: "OTP verified successfully." });
+  } catch (error) {
+    return res.status(500).json({ message: `Verify OTP Error: ${error}` });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newpassword } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || user.isOtpVerified === false) {
+      return res.status(400).json({ message: "OTP Verification Required" });
+    }
+    user.password = await bcrypt.hash(newpassword, 10);
+    user.isOtpVerified = false;
+    await user.save();
+    return res.status(200).json({ message: "Password Reset successfully." });
+  } catch (error) {
+    return res.status(500).json({ message: `Reset Password Error: ${error}` });
+  }
+};
