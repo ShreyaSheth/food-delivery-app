@@ -3,6 +3,9 @@ import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { ClipLoader } from "react-spinners";
 import { serverUrl } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,23 +20,39 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const INITIAL_VALUES = {
+  email: "",
+  password: "",
+};
+
+const VALIDATION_SCHEMA = Yup.object({
+  email: Yup.string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters long")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must include one uppercase, one lowercase, one number, and one special character"
+    )
+    .required("Password is required"),
+});
+
 const SignIn = () => {
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
+  const handleSignIn = async (values, { setSubmitting }) => {
     try {
-      const values = { email, password };
+      console.log(values);
       const res = await axios.post(`${serverUrl}/api/auth/signin`, values, {
         withCredentials: true,
       });
-      console.log("Signup successful:", res.data);
+      console.log("SignIn successful:", res.data);
     } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
+      console.error("SignIn error:", error.response?.data || error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
   return (
@@ -54,60 +73,113 @@ const SignIn = () => {
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your Email"
-                  required
-                />
-              </div>
+        <Formik
+          initialValues={INITIAL_VALUES}
+          validationSchema={VALIDATION_SCHEMA}
+          onSubmit={handleSignIn}
+        >
+          {({
+            isSubmitting,
+            values,
+            handleChange,
+            handleBlur,
+            errors,
+            touched,
+          }) => (
+            <>
+              <CardContent>
+                <Form>
+                  <div className="flex flex-col gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Field
+                        as={Input}
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter your Email"
+                        className={
+                          errors.email && touched.email ? "border-red-500" : ""
+                        }
+                        required
+                      />
+                      <ErrorMessage
+                        name="email"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
 
-              <div className="grid gap-2 relative">
-                <Label htmlFor="password">Password</Label>
-                <div>
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your Password"
-                    required
-                  />
-                  <Button
-                    variant="transey"
-                    className={
-                      "absolute right-3 top-5 text-gray-500 cursor-pointer"
-                    }
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
-                  </Button>
-                </div>
-                <div
-                  className="text-right mb-2 text-amber-600 cursor-pointer"
-                  onClick={() => navigate("/forgot-password")}
-                >
-                  Forgot Password?
-                </div>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" onClick={handleSignIn}>
-            Sign In
-          </Button>
-          <Button variant="outline" className="w-full">
-            <FcGoogle /> Login with Google
-          </Button>
-        </CardFooter>
+                    <div className="grid gap-2 relative">
+                      <Label htmlFor="password">Password</Label>
+                      <div>
+                        <Field
+                          as={Input}
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          value={values.password}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          placeholder="Enter your Password"
+                          className={
+                            errors.password && touched.password
+                              ? "border-red-500"
+                              : ""
+                          }
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="transey"
+                          className={
+                            "absolute right-3 top-5 text-gray-500 cursor-pointer"
+                          }
+                          onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                          {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                        </Button>
+                      </div>
+                      <ErrorMessage
+                        name="password"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                      <div
+                        className="text-right mb-2 text-amber-600 cursor-pointer"
+                        onClick={() => navigate("/forgot-password")}
+                      >
+                        Forgot Password?
+                      </div>
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full cursor-pointer"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <ClipLoader size={16} color="#ffffff" />
+                          Signing In...
+                        </div>
+                      ) : (
+                        "Sign In"
+                      )}
+                    </Button>
+                  </div>
+                </Form>
+              </CardContent>
+              <CardFooter className="flex-col gap-2">
+                <Button variant="outline" className="w-full">
+                  <FcGoogle /> Sign In with Google
+                </Button>
+              </CardFooter>
+            </>
+          )}
+        </Formik>
       </Card>
     </div>
   );
