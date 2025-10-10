@@ -11,6 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { FcGoogle } from "react-icons/fc";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +27,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ClipLoader } from "react-spinners";
 import { serverUrl } from "@/App";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
 
 const INITIAL_VALUES = {
   firstName: "",
@@ -56,9 +66,17 @@ const VALIDATION_SCHEMA = Yup.object({
     .required("Role is required"),
 });
 
+const MOBILE_VALIDATION_SCHEMA = Yup.object({
+  mobile: Yup.string()
+    .matches(/^[0-9]{10}$/, "Mobile number must be exactly 10 digits")
+    .required("Mobile number is required"),
+});
+
 const SignUp = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showMobileDialog, setShowMobileDialog] = useState(false);
+  const [tempMobile, setTempMobile] = useState("");
 
   const handleSignUp = async (values, { setSubmitting }) => {
     try {
@@ -69,6 +87,61 @@ const SignUp = () => {
       console.log("Signup successful:", res.data);
     } catch (error) {
       console.error("Signup error:", error.response?.data || error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleAuth = async (mobile = null) => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+      const userData = {
+        firstName: user.displayName?.split(" ")[0] || "",
+        lastName: user.displayName?.split(" ")[1] || "",
+        email: user.email,
+        mobile: mobile || tempMobile,
+        role: "user",
+      };
+
+      console.log("Google auth successful:", userData);
+
+      const res = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        userData,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Backend signup successful:", res.data);
+    } catch (error) {
+      console.error("Google auth error:", error);
+      setShowMobileDialog(false);
+    }
+  };
+
+  const handleGoogleSignUpClick = () => {
+    // Check if mobile is already entered in the form
+    const formMobile = document.querySelector('input[name="mobile"]')?.value;
+
+    if (formMobile && formMobile.length === 10) {
+      // Mobile is available, proceed with Google auth
+      handleGoogleAuth(formMobile);
+    } else {
+      // Mobile not available, show dialog
+      setShowMobileDialog(true);
+    }
+  };
+
+  const handleMobileDialogSubmit = async (values, { setSubmitting }) => {
+    try {
+      setTempMobile(values.mobile);
+      setShowMobileDialog(false);
+      await handleGoogleAuth(values.mobile);
+    } catch (error) {
+      console.error("Mobile dialog error:", error);
     } finally {
       setSubmitting(false);
     }
@@ -282,13 +355,96 @@ const SignUp = () => {
                 </Form>
               </CardContent>
               <CardFooter className="flex-col gap-2">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  onClick={handleGoogleSignUpClick}
+                >
                   <FcGoogle /> Sign Up with Google
                 </Button>
               </CardFooter>
             </>
           )}
         </Formik>
+        <Dialog open={showMobileDialog} onOpenChange={setShowMobileDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle className="text-amber-600">
+                Mobile Number Required
+              </DialogTitle>
+              <DialogDescription>
+                Please enter your mobile number to continue with Google Sign Up.
+                This is required for account verification.
+              </DialogDescription>
+            </DialogHeader>
+            <Formik
+              initialValues={{ mobile: "" }}
+              validationSchema={MOBILE_VALIDATION_SCHEMA}
+              onSubmit={handleMobileDialogSubmit}
+            >
+              {({
+                isSubmitting,
+                values,
+                handleChange,
+                handleBlur,
+                errors,
+                touched,
+              }) => (
+                <Form>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="dialogMobile">Mobile Number</Label>
+                      <Field
+                        as={Input}
+                        id="dialogMobile"
+                        name="mobile"
+                        type="text"
+                        value={values.mobile}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter your mobile number"
+                        className={
+                          errors.mobile && touched.mobile
+                            ? "border-red-500"
+                            : ""
+                        }
+                      />
+                      <ErrorMessage
+                        name="mobile"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowMobileDialog(false)}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="cursor-pointer"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <ClipLoader size={16} color="#ffffff" />
+                          Continuing...
+                        </div>
+                      ) : (
+                        "Continue with Google"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </Form>
+              )}
+            </Formik>
+          </DialogContent>
+        </Dialog>
       </Card>
     </div>
   );
