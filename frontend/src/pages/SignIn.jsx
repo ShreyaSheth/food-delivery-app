@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
 
 const INITIAL_VALUES = {
   email: "",
@@ -55,6 +57,32 @@ const SignIn = () => {
       setSubmitting(false);
     }
   };
+
+  const handleGoogleAuth = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+      const userData = {
+        email: user.email,
+      };
+
+      console.log("Google auth successful:", userData);
+
+      const res = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        userData,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Backend signin successful:", res.data);
+    } catch (error) {
+      console.error("Google auth error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center">
       <Card className="w-full max-w-sm shadow-lg">
@@ -173,7 +201,11 @@ const SignIn = () => {
                 </Form>
               </CardContent>
               <CardFooter className="flex-col gap-2">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  onClick={handleGoogleAuth}
+                >
                   <FcGoogle /> Sign In with Google
                 </Button>
               </CardFooter>
