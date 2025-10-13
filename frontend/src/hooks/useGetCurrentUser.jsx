@@ -1,23 +1,22 @@
 import { serverUrl } from "@/App";
 import axios from "axios";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const useGetCurrentUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("🔄 Fetching current user...");
         const result = await axios.get(`${serverUrl}/api/user/current`, {
           withCredentials: true,
         });
-        console.log("✅ Current user fetched successfully:", result.data);
+        console.log("Current user fetched successfully:", result.data);
       } catch (error) {
         console.log(
-          "❌ Error fetching current user:",
+          "Error fetching current user:",
           error.response?.data || error.message
         );
         if (error.response?.status === 401) {
-          console.log("🔐 User not authenticated");
+          console.log("User not authenticated");
         }
       }
     };
