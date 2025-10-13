@@ -68,8 +68,6 @@ const SignIn = () => {
         email: user.email,
       };
 
-      console.log("Google auth successful:", userData);
-
       const res = await axios.post(
         `${serverUrl}/api/auth/google-auth`,
         userData,
