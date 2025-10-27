@@ -6,6 +6,7 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ClipLoader } from "react-spinners";
+import { useDispatch } from "react-redux";
 import { serverUrl } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
+import { setUserData } from "@/redux/userSlice";
 
 const INITIAL_VALUES = {
   email: "",
@@ -42,15 +44,15 @@ const VALIDATION_SCHEMA = Yup.object({
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async (values, { setSubmitting }) => {
     try {
-      console.log(values);
       const res = await axios.post(`${serverUrl}/api/auth/signin`, values, {
         withCredentials: true,
       });
-      console.log("SignIn successful:", res.data);
+      dispatch(setUserData(res.data));
     } catch (error) {
       console.error("SignIn error:", error.response?.data || error.message);
     } finally {
@@ -75,7 +77,7 @@ const SignIn = () => {
           withCredentials: true,
         }
       );
-      console.log("Backend signin successful:", res.data);
+      dispatch(setUserData(res.data));
     } catch (error) {
       console.error("Google auth error:", error);
     }

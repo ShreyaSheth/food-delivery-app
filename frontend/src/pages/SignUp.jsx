@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,6 +30,7 @@ import { ClipLoader } from "react-spinners";
 import { serverUrl } from "@/App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
+import { setUserData } from "@/redux/userSlice";
 
 const INITIAL_VALUES = {
   firstName: "",
@@ -74,17 +76,16 @@ const MOBILE_VALIDATION_SCHEMA = Yup.object({
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showMobileDialog, setShowMobileDialog] = useState(false);
   const [tempMobile, setTempMobile] = useState("");
-
   const handleSignUp = async (values, { setSubmitting }) => {
     try {
-      console.log(values);
       const res = await axios.post(`${serverUrl}/api/auth/signup`, values, {
         withCredentials: true,
       });
-      console.log("Signup successful:", res.data);
+      dispatch(setUserData(res.data));
     } catch (error) {
       console.error("Signup error:", error.response?.data || error.message);
     } finally {
@@ -115,7 +116,7 @@ const SignUp = () => {
           withCredentials: true,
         }
       );
-      console.log("Backend signup successful:", res.data);
+      dispatch(setUserData(res.data));
     } catch (error) {
       console.error("Google auth error:", error);
       setShowMobileDialog(false);
