@@ -32,9 +32,11 @@ const Nav = () => {
 
   const handleSignOut = async () => {
     try {
-      const res = await axios.post(`${serverUrl}/api/auth/signout`, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${serverUrl}/api/auth/signout`,
+        {},
+        { withCredentials: true }
+      );
       if (res.status === 200) dispatch(setUserData(null));
     } catch (error) {
       console.error("Signout error:", error.response?.data || error.message);

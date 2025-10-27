@@ -17,9 +17,7 @@ const useGetCurrentUser = () => {
           "Error fetching current user:",
           error.response?.data || error.message
         );
-        if (error.response?.status === 401) {
-          console.log("User not authenticated");
-        }
+        dispatch(setUserData(null));
       }
     };
     fetchUser();
