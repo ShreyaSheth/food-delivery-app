@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 const Home = () => {
   const { userData } = useSelector((state) => state.user);
-
+  console.log("home", userData);
   return (
     <div>
       {userData.role === "deliveryBoy" ? (

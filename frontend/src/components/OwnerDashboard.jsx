@@ -1,7 +1,12 @@
 import React from "react";
+import Nav from "./Nav";
 
 const OwnerDashboard = () => {
-  return <div>OwnerDashboard</div>;
+  return (
+    <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col item-center">
+      <Nav />
+    </div>
+  );
 };
 
 export default OwnerDashboard;
