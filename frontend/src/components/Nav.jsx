@@ -12,6 +12,7 @@ import { FaPlus } from "react-icons/fa";
 const Nav = () => {
   const dispatch = useDispatch();
   const { userData, city } = useSelector((state) => state?.user);
+  const { myShopData } = useSelector((state) => state?.owner);
   const firstNameInitial = (userData?.firstName || "A")
     .slice(0, 1)
     .toUpperCase();
@@ -92,14 +93,18 @@ const Nav = () => {
                 type="button"
                 variant="secondary"
                 className="relative cursor-pointer h-9 p-0 bg-amber-600/40 text-amber-700 hover:text-amber-600 hover:bg-amber-600/50"
+                disabled={!myShopData}
               >
                 <FaPlus className="h-5 w-5 text-amber-600" />
-                <span className="text-sm font-semibold">Add Food Item</span>
+                <span className="text-sm font-semibold text-amber-600">
+                  Add Food Item
+                </span>
               </Button>
               <Button
                 type="button"
                 variant="secondary"
-                className="relative hidden cursor-pointer bg-amber-600/40 text-amber-700 hover:text-amber-600 hover:bg-amber-600/50 md:inline-flex"
+                className="relative hidden cursor-pointer bg-amber-600/40 text-amber-600 hover:text-amber-600 hover:bg-amber-600/50 md:inline-flex"
+                disabled={!myShopData}
               >
                 My Orders
                 <span className="absolute -right-2 -top-2 bg-amber-600 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
