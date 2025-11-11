@@ -11,7 +11,7 @@ import { FaPlus } from "react-icons/fa";
 
 const Nav = () => {
   const dispatch = useDispatch();
-  const { userData, city } = useSelector((state) => state?.user);
+  const { userData, currentCity } = useSelector((state) => state?.user);
   const { myShopData } = useSelector((state) => state?.owner);
   const firstNameInitial = (userData?.firstName || "A")
     .slice(0, 1)
@@ -58,7 +58,7 @@ const Nav = () => {
               <div className="flex items-center gap-1 text-amber-600">
                 <IoLocationSharp className="h-5 w-5" />
                 <Input
-                  value={city}
+                  value={currentCity}
                   // onChange={(e) => setLocation(e.target.value)}
                   className="h-8 w-28 border-0 p-0 text-sm shadow-none focus-visible:ring-0"
                 />
@@ -184,7 +184,7 @@ const Nav = () => {
             <div className="flex items-center gap-1 text-amber-600">
               <IoLocationSharp className="h-5 w-5" />
               <Input
-                value={city}
+                value={currentCity}
                 //   onChange={(e) => setLocation(e.target.value)}
                 className="h-8 w-24 border-0 p-0 text-sm shadow-none focus-visible:ring-0"
               />
