@@ -13,10 +13,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import ItemCard from "./ItemCard";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const { myShopData } = useSelector((state) => state.owner);
+  console.log("MY SHOP DATA", myShopData);
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col item-center">
       <Nav />
@@ -57,7 +59,7 @@ const OwnerDashboard = () => {
               </CardHeader>
             </Card>
 
-            {(!myShopData.items || myShopData.items.length === 0) && (
+            {(!myShopData.item || myShopData.item.length === 0) && (
               <Card className="w-full text-center shadow-lg gap-4 py-4">
                 <CardHeader>
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-600">
@@ -86,6 +88,10 @@ const OwnerDashboard = () => {
                 </CardFooter>
               </Card>
             )}
+            {myShopData.item &&
+              myShopData.item.map((item) => (
+                <ItemCard key={item._id} item={item} />
+              ))}
           </div>
         ) : (
           <Card className="w-full max-w-md text-center shadow-lg">

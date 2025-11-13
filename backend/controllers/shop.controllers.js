@@ -5,7 +5,6 @@ export const createEditShop = async (req, res) => {
   try {
     const { name, city, state, address } = req.body;
     let image;
-    console.log("req.file", req.file);
     if (req.file) {
       console.log(req.file);
       image = await uploadOnCloudinary(req.file.path);
@@ -34,7 +33,7 @@ export const createEditShop = async (req, res) => {
         { new: true }
       );
     }
-    await shop.populate("owner");
+    await shop.populate("owner item");
     return res.status(201).json(shop);
   } catch (error) {
     return res.status(500).json({ message: `Create Shop Error ${error}` });

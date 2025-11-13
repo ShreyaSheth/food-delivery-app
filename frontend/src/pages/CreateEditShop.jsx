@@ -25,7 +25,6 @@ const VALIDATION_SCHEMA = Yup.object({
   city: Yup.string().required("City is required"),
   state: Yup.string().required("State is required"),
   address: Yup.string().required("Address is required"),
-  // image is optional for now (no upload integration here)
 });
 
 const CreateEditShop = () => {
@@ -65,9 +64,8 @@ const CreateEditShop = () => {
       if (status === 201) {
         dispatch(setMyShopData(data));
         navigate("/");
-        toast.success(message);
       } else {
-        toast.error(message);
+        console.log(message);
       }
     } finally {
       setSubmitting(false);
@@ -124,7 +122,6 @@ const CreateEditShop = () => {
                         id="name"
                         name="name"
                         type="text"
-                        placeholder="e.g., Craveo Downtown"
                         className={
                           errors.name && touched.name ? "border-red-500" : ""
                         }
@@ -178,7 +175,6 @@ const CreateEditShop = () => {
                           id="city"
                           name="city"
                           type="text"
-                          placeholder="e.g., Ahmedabad"
                           className={
                             errors.city && touched.city ? "border-red-500" : ""
                           }
@@ -200,7 +196,6 @@ const CreateEditShop = () => {
                           id="state"
                           name="state"
                           type="text"
-                          placeholder="e.g., Gujarat"
                           className={
                             errors.state && touched.state
                               ? "border-red-500"
@@ -225,7 +220,6 @@ const CreateEditShop = () => {
                         id="address"
                         name="address"
                         type="text"
-                        placeholder="House no, Street, Area, Landmark"
                         className={
                           errors.address && touched.address
                             ? "border-red-500"

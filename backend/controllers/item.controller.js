@@ -21,7 +21,10 @@ export const createItem = async (req, res) => {
       image,
       shop: shop._id,
     });
-    return res.status(201).json(item);
+    shop.item.push(item._id);
+    await shop.save();
+    await shop.populate("item owner");
+    return res.status(201).json(shop);
   } catch (error) {
     return res
       .status(500)

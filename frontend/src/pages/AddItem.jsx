@@ -1,7 +1,316 @@
-import React from "react";
+import { serverUrl } from "@/App";
+import axios from "axios";
+import React, { useMemo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { setMyShopData } from "@/redux/ownerSlice";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { FaUtensils } from "react-icons/fa";
+
+const ImagePreview = ({ file, fallbackUrl }) => {
+  const objectUrl = useMemo(() => {
+    if (file instanceof File) {
+      return URL.createObjectURL(file);
+    }
+    return null;
+  }, [file]);
+
+  useEffect(() => {
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [objectUrl]);
+
+  const src =
+    objectUrl ?? (typeof fallbackUrl === "string" ? fallbackUrl : null);
+  if (!src) return null;
+
+  return (
+    <img
+      src={src}
+      alt=""
+      className="w-full h-48 object-cover rounded-lg border"
+    />
+  );
+};
+
+const ItemCategory = Object.freeze({
+  SNACKS: "Snacks",
+  MAIN_COURSE: "Main Course",
+  APPETIZERS: "Appetizers",
+  SOUPS: "Soups",
+  SMOOTHIES: "Smoothies",
+  NORTH_INDIAN: "North Indian",
+  SOUTH_INDIAN: "South Indian",
+  CHINESE: "Chinese",
+  FAST_FOOD: "Fast Food",
+  MEXICAN: "Mexican",
+  RICE_BIRYANIS: "Rice/Biryanis",
+  VEGAN: "Vegan",
+  DRINKS: "Drinks",
+  BEVERAGES: "Beverages",
+  DESSERTS: "Desserts",
+  OTHER: "Other",
+});
+
+const CATEGORY_OPTIONS = Object.values(ItemCategory);
+const FOOD_TYPES = ["veg", "non-veg"];
+const VALIDATION_SCHEMA = Yup.object({
+  name: Yup.string().required("Item name is required"),
+  category: Yup.string().required("Category is required"),
+  price: Yup.number().required("Price is required"),
+  foodType: Yup.string().required("Food type is required"),
+});
 
 const AddItem = () => {
-  return <div>AddItem</div>;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { myShopData } = useSelector((state) => state.owner);
+  const INITIAL_VALUES = {
+    name: "",
+    image: null,
+    foodType: "veg",
+    category: "",
+    price: "",
+  };
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("category", values.category);
+      formData.append("price", values.price);
+      formData.append("foodType", values.foodType);
+      if (values.image instanceof File) {
+        formData.append("image", values.image);
+      }
+
+      const { data, status, message } = await axios.post(
+        `${serverUrl}/api/item/add-item`,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (status === 201) {
+        console.log("DATA", data);
+        dispatch(setMyShopData(data));
+        navigate("/");
+      } else {
+        console.log(message);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="w-full min-h-screen bg-[#fff9f6]">
+      <div className="mx-auto max-w-6xl px-4 py-4">
+        <button
+          type="button"
+          className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
+          onClick={() => navigate(-1)}
+        >
+          <IoIosArrowRoundBack size={32} />
+          <span className="font-medium">Back</span>
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-xl px-4 pb-10">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+              <FaUtensils size={22} />
+            </div>
+            <CardTitle className="text-center text-amber-600">
+              {myShopData ? "Edit" : "Add"} Item
+            </CardTitle>
+            <CardDescription className="text-center">
+              Provide details to add your menu item
+            </CardDescription>
+          </CardHeader>
+          <Formik
+            initialValues={INITIAL_VALUES}
+            validationSchema={VALIDATION_SCHEMA}
+            onSubmit={handleSubmit}
+          >
+            {({
+              isSubmitting,
+              setFieldValue,
+              values,
+              handleChange,
+              handleBlur,
+              errors,
+              touched,
+            }) => (
+              <Form encType="multipart/form-data">
+                <CardContent>
+                  <div className="flex flex-col gap-5">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Item Name</Label>
+                      <Field
+                        as={Input}
+                        id="name"
+                        name="name"
+                        type="text"
+                        className={
+                          errors.name && touched.name ? "border-red-500" : ""
+                        }
+                        value={values.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <ErrorMessage
+                        name="name"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="image">Item Image</Label>
+                      <Input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0] || null;
+                          setFieldValue("image", file);
+                        }}
+                      />
+                      <div className="text-xs text-gray-500">
+                        JPG, PNG, or WEBP. Max 5MB.
+                      </div>
+                      <div>
+                        <ImagePreview
+                          file={values.image}
+                          fallbackUrl={myShopData?.image || null}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-5">
+                      <div className="grid gap-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Field
+                          as="select"
+                          id="category"
+                          name="category"
+                          className={`border rounded-md h-10 px-3 ${
+                            errors.category && touched.category
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                          value={values.category}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        >
+                          <option value="">Select category</option>
+                          {CATEGORY_OPTIONS.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </Field>
+                        <ErrorMessage
+                          name="category"
+                          component="div"
+                          className="text-red-500 text-sm mt-1"
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="foodType">Food Type</Label>
+                        <Field
+                          as="select"
+                          id="foodType"
+                          name="foodType"
+                          className={`border rounded-md h-10 px-3 ${
+                            errors.foodType && touched.foodType
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                          value={values.foodType}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        >
+                          {FOOD_TYPES.map((ft) => (
+                            <option key={ft} value={ft}>
+                              {ft}
+                            </option>
+                          ))}
+                        </Field>
+                        <ErrorMessage
+                          name="foodType"
+                          component="div"
+                          className="text-red-500 text-sm mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="price">Price</Label>
+                      <Field
+                        as={Input}
+                        id="price"
+                        name="price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className={
+                          errors.price && touched.price ? "border-red-500" : ""
+                        }
+                        value={values.price}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <ErrorMessage
+                        name="price"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="justify-end gap-3 mt-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="cursor-pointer"
+                    onClick={() => navigate("/")}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="cursor-pointer bg-amber-600 hover:bg-amber-700 text-white"
+                    disabled={isSubmitting}
+                  >
+                    Save
+                  </Button>
+                </CardFooter>
+              </Form>
+            )}
+          </Formik>
+        </Card>
+      </div>
+    </div>
+  );
 };
 
 export default AddItem;

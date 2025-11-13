@@ -94,6 +94,7 @@ const Nav = () => {
                 variant="secondary"
                 className="relative cursor-pointer h-9 p-0 bg-amber-600/40 text-amber-700 hover:text-amber-600 hover:bg-amber-600/50"
                 disabled={!myShopData}
+                onClick={() => navigate("/add-item")}
               >
                 <FaPlus className="h-5 w-5 text-amber-600" />
                 <span className="text-sm font-semibold text-amber-600">
