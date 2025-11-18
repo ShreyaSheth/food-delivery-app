@@ -16,8 +16,8 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
   const priceLabel = typeof price === "number" ? price.toFixed(2) : price ?? "";
 
   return (
-    <Card className="w-full shadow-md overflow-hidden py-0">
-      <CardContent className="p-4">
+    <Card className="w-full shadow-md overflow-hidden gap-2 py-3">
+      <CardContent className="px-4 py-1">
         <div className="flex items-center gap-4">
           <div className="flex-shrink-0">
             {image ? (
@@ -71,22 +71,20 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
             <Button
               type="button"
               variant="outline"
-              className="cursor-pointer"
+              className="cursor-pointer hover:bg-amber-600 hover:text-white"
               onClick={onEdit}
             >
-              <FiEdit2 className="mr-2" />
-              Edit
+              <FiEdit2 />
             </Button>
           )}
           {onDelete && (
             <Button
               type="button"
               variant="destructive"
-              className="cursor-pointer"
+              className="cursor-pointer hover:bg-amber-600"
               onClick={onDelete}
             >
-              <FiTrash2 className="mr-2" />
-              Delete
+              <FiTrash2 />
             </Button>
           )}
         </CardFooter>

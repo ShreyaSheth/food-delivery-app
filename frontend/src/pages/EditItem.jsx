@@ -1,8 +1,8 @@
 import { serverUrl } from "@/App";
 import axios from "axios";
-import React, { useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
@@ -74,18 +74,37 @@ const VALIDATION_SCHEMA = Yup.object({
   price: Yup.number().required("Price is required"),
   foodType: Yup.string().required("Food type is required"),
 });
-
-const AddItem = () => {
+const INITIAL_VALUES = {
+  name: "",
+  image: null,
+  foodType: "veg",
+  category: "",
+  price: "",
+};
+const EditItem = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myShopData } = useSelector((state) => state.owner);
-  const INITIAL_VALUES = {
-    name: "",
-    image: null,
-    foodType: "veg",
-    category: "",
-    price: "",
+  const { itemId } = useParams();
+  const [formData, setFormData] = useState(INITIAL_VALUES);
+  const [loading, setLoading] = useState(true);
+
+  const handleGetItemById = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${serverUrl}/api/item/get-by-id/${itemId}`, {
+        withCredentials: true,
+      });
+      console.log("res.data", res.data);
+      setFormData(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
+  useEffect(() => {
+    handleGetItemById();
+  }, [itemId]);
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const formData = new FormData();
@@ -98,15 +117,14 @@ const AddItem = () => {
       }
 
       const { data, status, message } = await axios.post(
-        `${serverUrl}/api/item/add-item`,
+        `${serverUrl}/api/item/edit-item/${itemId}`,
         formData,
         {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      if (status === 201) {
-        console.log("DATA", data);
+      if (status === 200) {
         dispatch(setMyShopData(data));
         navigate("/");
       } else {
@@ -116,6 +134,14 @@ const AddItem = () => {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-[#fff9f6] flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#fff9f6]">
@@ -137,15 +163,16 @@ const AddItem = () => {
               <FaUtensils size={22} />
             </div>
             <CardTitle className="text-center text-amber-600">
-              Add Item
+              Edit Item
             </CardTitle>
             <CardDescription className="text-center">
               Provide details to add your menu item
             </CardDescription>
           </CardHeader>
           <Formik
-            initialValues={INITIAL_VALUES}
+            initialValues={formData}
             validationSchema={VALIDATION_SCHEMA}
+            enableReinitialize
             onSubmit={handleSubmit}
           >
             {({
@@ -158,6 +185,7 @@ const AddItem = () => {
               touched,
             }) => (
               <Form encType="multipart/form-data">
+                {console.log("values", values)}
                 <CardContent>
                   <div className="flex flex-col gap-5">
                     <div className="grid gap-2">
@@ -199,7 +227,7 @@ const AddItem = () => {
                       <div>
                         <ImagePreview
                           file={values.image}
-                          fallbackUrl={myShopData?.image || null}
+                          fallbackUrl={formData?.image || null}
                         />
                       </div>
                     </div>
@@ -301,7 +329,14 @@ const AddItem = () => {
                     className="cursor-pointer bg-amber-600 hover:bg-amber-700 text-white"
                     disabled={isSubmitting}
                   >
-                    Save
+                    {isSubmitting ? (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Saving...
+                      </span>
+                    ) : (
+                      "Save"
+                    )}
                   </Button>
                 </CardFooter>
               </Form>
@@ -313,4 +348,4 @@ const AddItem = () => {
   );
 };
 
-export default AddItem;
+export default EditItem;

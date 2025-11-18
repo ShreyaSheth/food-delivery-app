@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { IoLocationSharp } from "react-icons/io5";
 import { FiSearch, FiShoppingCart } from "react-icons/fi";
-import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { serverUrl } from "@/App";
 import { setUserData } from "@/redux/userSlice";
-import { FaPlus } from "react-icons/fa";
 
 const Nav = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userData, currentCity } = useSelector((state) => state?.user);
   const { myShopData } = useSelector((state) => state?.owner);
   const firstNameInitial = (userData?.firstName || "A")
@@ -47,7 +49,6 @@ const Nav = () => {
   return (
     <header className="w-full border-b bg-amber-50/60 backdrop-blur supports-[backdrop-filter]:bg-amber-50/50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
-        {/* Brand */}
         <div className="text-2xl font-bold tracking-tight text-amber-600 select-none">
           Craveo
         </div>

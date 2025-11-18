@@ -251,7 +251,14 @@ const CreateEditShop = () => {
                     className="cursor-pointer bg-amber-600 hover:bg-amber-700 text-white"
                     disabled={isSubmitting}
                   >
-                    Save
+                    {isSubmitting ? (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Saving...
+                      </span>
+                    ) : (
+                      "Save"
+                    )}
                   </Button>
                 </CardFooter>
               </Form>

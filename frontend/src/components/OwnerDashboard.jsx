@@ -14,8 +14,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import ItemCard from "./ItemCard";
+import useGetMyShop from "@/hooks/useGetMyShop";
 
 const OwnerDashboard = () => {
+  useGetMyShop();
   const navigate = useNavigate();
   const { myShopData } = useSelector((state) => state.owner);
   console.log("MY SHOP DATA", myShopData);
@@ -88,10 +90,18 @@ const OwnerDashboard = () => {
                 </CardFooter>
               </Card>
             )}
-            {myShopData.item &&
-              myShopData.item.map((item) => (
-                <ItemCard key={item._id} item={item} />
-              ))}
+            {myShopData?.item?.map((item) => (
+              <ItemCard
+                key={item._id}
+                item={item}
+                onEdit={() => {
+                  navigate(`/edit-item/${item._id}`);
+                }}
+                onDelete={() => {
+                  // navigate(`/delete-item/${item._id}`);
+                }}
+              />
+            ))}
           </div>
         ) : (
           <Card className="w-full max-w-md text-center shadow-lg">
