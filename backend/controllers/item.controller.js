@@ -23,7 +23,10 @@ export const createItem = async (req, res) => {
     });
     shop.item.push(item._id);
     await shop.save();
-    await shop.populate("item owner");
+    await shop.populate([
+      { path: "item", options: { sort: { updatedAt: -1 } } },
+      { path: "owner" },
+    ]);
     return res.status(201).json(shop);
   } catch (error) {
     return res
@@ -54,7 +57,10 @@ export const editItem = async (req, res) => {
     if (!item) {
       return res.status(400).json({ message: "Item not found" });
     }
-    const shop = await Shop.findOne({ owner: req.userId }).populate("item");
+    const shop = await Shop.findOne({ owner: req.userId }).populate({
+      path: "item",
+      options: { sort: { updatedAt: -1 } },
+    });
     return res.status(200).json(shop);
   } catch (error) {
     return res
