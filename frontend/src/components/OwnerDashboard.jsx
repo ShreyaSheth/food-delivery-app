@@ -20,7 +20,6 @@ const OwnerDashboard = () => {
   useGetMyShop();
   const navigate = useNavigate();
   const { myShopData } = useSelector((state) => state.owner);
-  console.log("MY SHOP DATA", myShopData);
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] dark:bg-neutral-950 flex flex-col item-center">
       <Nav />
@@ -96,9 +95,6 @@ const OwnerDashboard = () => {
                 item={item}
                 onEdit={() => {
                   navigate(`/edit-item/${item._id}`);
-                }}
-                onDelete={() => {
-                  // navigate(`/delete-item/${item._id}`);
                 }}
               />
             ))}

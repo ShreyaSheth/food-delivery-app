@@ -1,4 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { serverUrl } from "@/App";
 import {
   Card,
   CardContent,
@@ -8,12 +11,25 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { setMyShopData } from "@/redux/ownerSlice";
 
-const ItemCard = ({ item, onEdit, onDelete }) => {
+const ItemCard = ({ item, onEdit }) => {
+  const dispatch = useDispatch();
   const { name, image, category, foodType, price } = item || {};
   console.log("ITEM", item);
   const isVeg = String(foodType).toLowerCase() === "veg";
   const priceLabel = typeof price === "number" ? price.toFixed(2) : price ?? "";
+
+  const handleDeleteItem = async () => {
+    try {
+      const res = await axios.get(`${serverUrl}/api/item/delete/${item._id}`, {
+        withCredentials: true,
+      });
+      dispatch(setMyShopData(res.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Card className="w-full shadow-md overflow-hidden gap-2 py-3">
@@ -57,7 +73,9 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
               </span>
             </div>
             <div className="mt-3 flex items-baseline justify-between">
-              <div className="text-gray-500 dark:text-gray-400 text-sm">Price</div>
+              <div className="text-gray-500 dark:text-gray-400 text-sm">
+                Price
+              </div>
               <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
                 ₹ {priceLabel}
               </div>
@@ -65,30 +83,26 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
           </div>
         </div>
       </CardContent>
-      {(onEdit || onDelete) && (
-        <CardFooter className="justify-end gap-2">
-          {onEdit && (
-            <Button
-              type="button"
-              variant="outline"
-              className="cursor-pointer hover:bg-amber-600 hover:text-white"
-              onClick={onEdit}
-            >
-              <FiEdit2 />
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              type="button"
-              variant="destructive"
-              className="cursor-pointer hover:bg-amber-600"
-              onClick={onDelete}
-            >
-              <FiTrash2 />
-            </Button>
-          )}
-        </CardFooter>
-      )}
+      <CardFooter className="justify-end gap-2">
+        {onEdit && (
+          <Button
+            type="button"
+            variant="outline"
+            className="cursor-pointer hover:bg-amber-600 hover:text-white"
+            onClick={onEdit}
+          >
+            <FiEdit2 />
+          </Button>
+        )}
+        <Button
+          type="button"
+          variant="destructive"
+          className="cursor-pointer hover:bg-amber-600"
+          onClick={handleDeleteItem}
+        >
+          <FiTrash2 />
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
