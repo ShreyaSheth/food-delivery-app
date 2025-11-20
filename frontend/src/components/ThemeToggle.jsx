@@ -20,7 +20,7 @@ const ThemeToggle = () => {
             key={opt.key}
             type="button"
             variant={theme === opt.key ? "craveo" : "outline"}
-            className="h-8 text-xs"
+            className="h-8 text-xs cursor-pointer"
             onClick={() => setTheme(opt.key)}
           >
             {opt.label}

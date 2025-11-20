@@ -27,7 +27,7 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
                 className="h-20 w-20 object-cover rounded-md"
               />
             ) : (
-              <div className="h-20 w-20 rounded-md bg-gray-100" />
+              <div className="h-20 w-20 rounded-md bg-gray-100 dark:bg-neutral-800" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -57,8 +57,8 @@ const ItemCard = ({ item, onEdit, onDelete }) => {
               </span>
             </div>
             <div className="mt-3 flex items-baseline justify-between">
-              <div className="text-gray-500 text-sm">Price</div>
-              <div className="text-base font-semibold text-gray-900">
+              <div className="text-gray-500 dark:text-gray-400 text-sm">Price</div>
+              <div className="text-base font-semibold text-gray-900 dark:text-gray-100">
                 ₹ {priceLabel}
               </div>
             </div>

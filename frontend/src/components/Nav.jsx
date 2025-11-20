@@ -48,7 +48,7 @@ const Nav = () => {
     }
   };
   return (
-    <header className="w-full border-b bg-amber-50/60 backdrop-blur supports-[backdrop-filter]:bg-amber-50/50">
+    <header className="w-full border-b bg-amber-50/60 dark:bg-neutral-900/60 dark:border-neutral-800 backdrop-blur supports-[backdrop-filter]:bg-amber-50/50 dark:supports-[backdrop-filter]:bg-neutral-900/50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
         <div className="text-2xl font-bold tracking-tight text-amber-600 select-none">
           Craveo
@@ -56,7 +56,7 @@ const Nav = () => {
 
         {userData.role === "user" && (
           <div className="hidden w-full max-w-2xl items-center justify-center px-4 md:flex">
-            <div className="flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2 shadow-sm ring-1 ring-gray-200">
+            <div className="flex w-full items-center gap-3 rounded-xl bg-white dark:bg-neutral-900 px-3 py-2 shadow-sm ring-1 ring-gray-200 dark:ring-neutral-800">
               <div className="flex items-center gap-1 text-amber-600">
                 <IoLocationSharp className="h-5 w-5" />
                 <Input
@@ -150,7 +150,7 @@ const Nav = () => {
             {isMenuOpen && (
               <div
                 role="menu"
-                className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+                className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg"
               >
                 {/* On small screens include My Orders inside the menu */}
                 <div className="block md:hidden">
@@ -161,17 +161,17 @@ const Nav = () => {
                 </div>
 
                 {/* Common options */}
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-neutral-800">
                   Profile
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-neutral-800">
                   Settings
                 </button>
                 <div className="mx-2 my-1 h-px bg-gray-100" />
                 <ThemeToggle />
-                <div className="mx-2 my-1 h-px bg-gray-100" />
+                <div className="mx-2 my-1 h-px bg-gray-100 dark:bg-neutral-800" />
                 <button
-                  className="w-full px-4 py-2 text-left text-sm text-amber-600 hover:bg-amber-50"
+                  className="w-full px-4 py-2 text-left text-sm text-amber-600 hover:bg-amber-50 dark:hover:bg-neutral-800"
                   onClick={handleSignOut}
                 >
                   Logout
@@ -185,7 +185,7 @@ const Nav = () => {
       {/* Mobile search bar */}
       {userData.role === "user" && (
         <div className="px-4 pb-3 md:hidden">
-          <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-xl bg-white px-3 py-2 shadow-sm ring-1 ring-gray-200">
+          <div className="mx-auto flex max-w-6xl items-center gap-3 rounded-xl bg-white dark:bg-neutral-900 px-3 py-2 shadow-sm ring-1 ring-gray-200 dark:ring-neutral-800">
             <div className="flex items-center gap-1 text-amber-600">
               <IoLocationSharp className="h-5 w-5" />
               <Input

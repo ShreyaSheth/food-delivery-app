@@ -118,11 +118,11 @@ const AddItem = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#fff9f6]">
+    <div className="w-full min-h-screen bg-[#fff9f6] dark:bg-neutral-950">
       <div className="mx-auto max-w-6xl px-4 py-4">
         <button
           type="button"
-          className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
+          className="flex items-center gap-2 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
           onClick={() => navigate(-1)}
         >
           <IoIosArrowRoundBack size={32} />
@@ -136,7 +136,7 @@ const AddItem = () => {
             <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600">
               <FaUtensils size={22} />
             </div>
-            <CardTitle className="text-center text-amber-600">
+            <CardTitle className="text-center text-amber-600 dark:text-amber-400">
               Add Item
             </CardTitle>
             <CardDescription className="text-center">

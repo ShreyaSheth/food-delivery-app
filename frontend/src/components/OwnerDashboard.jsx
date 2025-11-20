@@ -22,7 +22,7 @@ const OwnerDashboard = () => {
   const { myShopData } = useSelector((state) => state.owner);
   console.log("MY SHOP DATA", myShopData);
   return (
-    <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col item-center">
+    <div className="w-full min-h-screen bg-[#fff9f6] dark:bg-neutral-950 flex flex-col item-center">
       <Nav />
       <div className="flex-1 flex items-center justify-center px-4">
         {myShopData ? (
@@ -67,7 +67,7 @@ const OwnerDashboard = () => {
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                     <FaUtensils size={28} />
                   </div>
-                  <CardTitle className="mt-2 text-amber-600">
+                  <CardTitle className="mt-2 text-amber-600 dark:text-amber-400">
                     Add Item
                   </CardTitle>
                   <CardDescription>
