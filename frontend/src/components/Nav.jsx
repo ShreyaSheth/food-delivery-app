@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { serverUrl } from "@/App";
 import { setUserData } from "@/redux/userSlice";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Nav = () => {
   const dispatch = useDispatch();
@@ -166,6 +167,8 @@ const Nav = () => {
                 <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
                   Settings
                 </button>
+                <div className="mx-2 my-1 h-px bg-gray-100" />
+                <ThemeToggle />
                 <div className="mx-2 my-1 h-px bg-gray-100" />
                 <button
                   className="w-full px-4 py-2 text-left text-sm text-amber-600 hover:bg-amber-50"
