@@ -10,11 +10,15 @@ import useGetCity from "./hooks/useGetCity";
 import CreateEditShop from "./pages/CreateEditShop";
 import AddItem from "./pages/AddItem";
 import EditItem from "./pages/EditItem";
+import useGetShopByCity from "./hooks/useGetShopByCity";
+import useGetItemsByCity from "./hooks/useGetItemsByCity";
 
 export const serverUrl = "http://localhost:8000";
 function App() {
   useGetCurrentUser();
   useGetCity();
+  useGetShopByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
+  useGetItemsByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   const { userData } = useSelector((state) => state.user);
   console.log(userData);
   return (
