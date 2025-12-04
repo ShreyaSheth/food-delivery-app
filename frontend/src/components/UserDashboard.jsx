@@ -2,17 +2,23 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import Nav from "./Nav";
 import CategoryCard from "./CategoryCard";
+import FoodItemCard from "./FoodItemCard";
 import { CATEGORY_OPTIONS, CATEGORY_IMAGES } from "@/constants/categories";
 import { useSelector } from "react-redux";
 
 const UserDashboard = () => {
   const scrollRef = useRef(null);
   const shopScrollRef = useRef(null);
-  const { shopsInCity, currentCity } = useSelector((state) => state.user);
+  const foodScrollRef = useRef(null);
+  const { shopsInCity, currentCity, itemsInCity } = useSelector(
+    (state) => state.user
+  );
   const [showLeftBtn, setShowLeftBtn] = useState(false);
   const [showRightBtn, setShowRightBtn] = useState(false);
   const [showLeftShopsBtn, setShowLeftShopsBtn] = useState(false);
   const [showRightShopsBtn, setShowRightShopsBtn] = useState(false);
+  const [showLeftFoodBtn, setShowLeftFoodBtn] = useState(false);
+  const [showRightFoodBtn, setShowRightFoodBtn] = useState(false);
 
   const handleCategoryClick = (category) => {
     console.log("Selected category:", category);
@@ -55,6 +61,20 @@ const UserDashboard = () => {
         );
       });
     }
+    if (foodScrollRef.current) {
+      updateBtnVisibility(
+        foodScrollRef,
+        setShowLeftFoodBtn,
+        setShowRightFoodBtn
+      );
+      foodScrollRef.current.addEventListener("scroll", () => {
+        updateBtnVisibility(
+          foodScrollRef,
+          setShowLeftFoodBtn,
+          setShowRightFoodBtn
+        );
+      });
+    }
     return () => {
       if (scrollRef.current) {
         scrollRef.current.removeEventListener("scroll", () => {
@@ -67,6 +87,15 @@ const UserDashboard = () => {
             shopScrollRef,
             setShowLeftShopsBtn,
             setShowRightShopsBtn
+          );
+        });
+      }
+      if (foodScrollRef.current) {
+        foodScrollRef.current.removeEventListener("scroll", () => {
+          updateBtnVisibility(
+            foodScrollRef,
+            setShowLeftFoodBtn,
+            setShowRightFoodBtn
           );
         });
       }
@@ -144,7 +173,7 @@ const UserDashboard = () => {
             className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             <div className="flex gap-6 min-w-max px-12">
-              {shopsInCity.map((shop) => (
+              {shopsInCity?.map((shop) => (
                 <CategoryCard
                   key={shop}
                   name={shop.name}
@@ -165,10 +194,53 @@ const UserDashboard = () => {
             </button>
           )}
         </div>
-        <div className="mb-6">
+        <div className="mb-6 mt-8">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
-            Suggested Food Items
+            Popular dishes near you
           </p>
+        </div>
+
+        <div className="relative">
+          {showLeftFoodBtn && (
+            <button
+              onClick={() => scrollHandler(foodScrollRef, "left")}
+              className="cursor-pointer absolute left-0 top-20 z-10 bg-white dark:bg-neutral-800 shadow-lg rounded-full p-2 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors"
+              aria-label="Scroll left"
+            >
+              <FaCircleChevronLeft className="text-amber-600 dark:text-amber-400 text-xl" />
+            </button>
+          )}
+
+          <div
+            ref={foodScrollRef}
+            className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            <div className="flex gap-4 min-w-max px-12">
+              {itemsInCity && itemsInCity.length > 0 ? (
+                itemsInCity.map((item) => (
+                  <FoodItemCard
+                    key={item._id}
+                    item={item}
+                    onClick={() => console.log("Food item clicked:", item)}
+                  />
+                ))
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400 text-sm py-8">
+                  No food items available in {currentCity}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {showRightFoodBtn && (
+            <button
+              onClick={() => scrollHandler(foodScrollRef, "right")}
+              className="cursor-pointer absolute -right-2 top-20 z-10 bg-white dark:bg-neutral-800 shadow-lg rounded-full p-2 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors"
+              aria-label="Scroll right"
+            >
+              <FaCircleChevronRight className="text-amber-600 dark:text-amber-400 text-xl" />
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -14,7 +14,9 @@ import ThemeToggle from "@/components/ThemeToggle";
 const Nav = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userData, currentCity } = useSelector((state) => state?.user);
+  const { userData, currentCity, cartItems } = useSelector(
+    (state) => state?.user
+  );
   const { myShopData } = useSelector((state) => state?.owner);
   const firstNameInitial = (userData?.firstName || "A")
     .slice(0, 1)
@@ -121,8 +123,14 @@ const Nav = () => {
                 type="button"
                 variant="ghost"
                 className="relative h-9 w-9 p-0 text-amber-600 hover:bg-amber-100"
+                onClick={() => navigate("/cart")}
               >
                 <FiShoppingCart className="h-5 w-5" />
+                {cartItems && cartItems.length > 0 && (
+                  <span className="absolute -right-2 -top-2 bg-amber-600 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
               </Button>
 
               {/* My Orders visible on md+ */}

@@ -7,6 +7,11 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const { userData } = useSelector((state) => state.user);
   console.log("home", userData);
+
+  if (!userData || !userData.role) {
+    return null; // Wait for user data to load
+  }
+
   return (
     <div>
       {userData.role === "deliveryBoy" ? (

@@ -6,7 +6,7 @@ const CategoryCard = ({ name, image, onClick }) => {
       className="flex flex-col items-center gap-2 cursor-pointer group"
       onClick={onClick}
     >
-      <div className="w-24 h-24 rounded-full overflow-hidden shadow-md border-2 border-amber-100 dark:border-neutral-800 group-hover:border-amber-300 dark:group-hover:border-amber-600 transition-colors">
+      <div className="w-24 h-24 rounded-full overflow-hidden shadow-md border-2 border-amber-100 dark:border-neutral-800 group-hover:border-amber-500 dark:group-hover:border-amber-500 group-hover:shadow-xl group-hover:border-4 transition-all duration-300">
         <img
           src={image}
           alt={name}

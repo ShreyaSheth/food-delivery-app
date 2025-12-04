@@ -13,10 +13,14 @@ export const createItem = async (req, res) => {
     if (!shop) {
       return res.status(400).json({ message: "Shop not found" });
     }
+
+    // Convert price to number
+    const itemPrice = typeof price === "string" ? parseFloat(price) : price;
+
     const item = await Item.create({
       name,
       category,
-      price,
+      price: itemPrice,
       foodType,
       image,
       shop: shop._id,
@@ -29,6 +33,7 @@ export const createItem = async (req, res) => {
     ]);
     return res.status(201).json(shop);
   } catch (error) {
+    console.error("Create item error:", error);
     return res
       .status(500)
       .json({ message: `Create item error: ${error.message}` });

@@ -78,7 +78,6 @@ const VALIDATION_SCHEMA = Yup.object({
 const AddItem = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myShopData } = useSelector((state) => state.owner);
   const INITIAL_VALUES = {
     name: "",
     image: null,
@@ -199,7 +198,7 @@ const AddItem = () => {
                       <div>
                         <ImagePreview
                           file={values.image}
-                          fallbackUrl={myShopData?.image || null}
+                          fallbackUrl={null}
                         />
                       </div>
                     </div>
