@@ -6,6 +6,7 @@ import {
   setCurrentCity,
   setCurrentState,
 } from "@/redux/userSlice";
+import { setAddress, setLocation } from "@/redux/mapSlice";
 
 const useGetCity = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const useGetCity = () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      dispatch(setLocation({ lat: latitude, lng: longitude }));
       const apiKey = import.meta.env.VITE_GEO_API_KEY;
       const res = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
@@ -26,6 +28,7 @@ const useGetCity = () => {
           res.data.results[0].address_line2 || res.data.results[0].address_line1
         )
       );
+      dispatch(setAddress(res.data.results[0].address_line2));
     });
   }, [userData]);
 };

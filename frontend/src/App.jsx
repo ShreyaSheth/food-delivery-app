@@ -13,6 +13,7 @@ import EditItem from "./pages/EditItem";
 import Cart from "./pages/Cart";
 import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemsByCity from "./hooks/useGetItemsByCity";
+import Checkout from "./pages/Checkout";
 
 export const serverUrl = "http://localhost:8000";
 function App() {
@@ -20,8 +21,17 @@ function App() {
   useGetCity();
   useGetShopByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   useGetItemsByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
-  const { userData } = useSelector((state) => state.user);
+  const { userData, loading } = useSelector((state) => state.user);
   console.log(userData);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#fff9f6] dark:bg-neutral-950">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-amber-600 border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
     <Routes>
       <Route
@@ -56,6 +66,11 @@ function App() {
         path="/cart"
         element={userData ? <Cart /> : <Navigate to="/signin" />}
       />
+      <Route
+        path="/checkout"
+        element={userData ? <Checkout /> : <Navigate to="/signin" />}
+      />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }

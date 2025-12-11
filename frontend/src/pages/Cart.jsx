@@ -61,7 +61,7 @@ const Cart = () => {
             <button
               className="cursor-pointer w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors"
               onClick={() => {
-                console.log("Checkout");
+                navigate("/checkout");
               }}
             >
               Proceed to Checkout
