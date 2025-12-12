@@ -31,6 +31,7 @@ const FoodItemCard = ({ item, onClick }) => {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     if (quantity > 0) {
+      console.log("item.shop:", item.shop);
       dispatch(
         addToCart({
           id: item._id,
@@ -40,6 +41,7 @@ const FoodItemCard = ({ item, onClick }) => {
           category: item.category,
           price: item.price,
           quantity: quantity,
+          shopId: item.shop,
         })
       );
     }

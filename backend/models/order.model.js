@@ -6,6 +6,7 @@ const shopOrderItemSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Item",
     },
+    name: String,
     price: Number,
     quantity: Number,
   },
@@ -40,16 +41,24 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     deliveryAddress: {
-      type: String,
-      latitude: Number,
-      longitude: Number,
-      required: true,
+      text: {
+        type: String,
+        required: true,
+      },
+      latitude: {
+        type: Number,
+        required: true,
+      },
+      longitude: {
+        type: Number,
+        required: true,
+      },
     },
     totalAmount: {
       type: Number,
       required: true,
     },
-    shopOrder: [shopOrderSchema],
+    shopOrders: [shopOrderSchema],
   },
   { timestamps: true }
 );

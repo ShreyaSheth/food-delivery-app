@@ -7,13 +7,16 @@ import { FiSearch } from "react-icons/fi";
 import { MdMyLocation } from "react-icons/md";
 import Nav from "@/components/Nav";
 import { Input } from "@/components/ui/input";
+import PaymentMethod from "@/components/PaymentMethod";
+import OrderSummary from "@/components/OrderSummary";
 import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { setAddress, setLocation } from "@/redux/mapSlice";
 import axios from "axios";
+import { serverUrl } from "@/App";
 
 const apiKey = import.meta.env.VITE_GEO_API_KEY;
-
+const deliveryFee = 40;
 // Component to animate map when location changes
 const AnimateMap = ({ location }) => {
   const map = useMap();
@@ -31,7 +34,9 @@ const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { location, address } = useSelector((state) => state.map);
+  const { cartItems, totalAmount } = useSelector((state) => state.user);
   const [inputAddress, setInputAddress] = useState(address || "");
+  const [selectedPayment, setSelectedPayment] = useState("COD");
 
   useEffect(() => {
     if (address) {
@@ -39,10 +44,13 @@ const Checkout = () => {
     }
   }, [address]);
 
+  const defaultCenter = [23.0225, 72.5714]; // Ahmedabad coordinates
+
   const mapCenter = useMemo(() => {
     if (location?.lat && location?.lng) {
       return [location.lat, location.lng];
     }
+    return defaultCenter;
   }, [location]);
 
   const onDragEnd = (e) => {
@@ -91,6 +99,27 @@ const Checkout = () => {
     }
   };
 
+  const handlePlaceOrder = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/order/place-order`,
+        {
+          paymentMethod: selectedPayment,
+          deliveryAddress: {
+            text: inputAddress,
+            latitude: location.lat,
+            longitude: location.lng,
+          },
+          totalAmount: totalAmount + deliveryFee,
+          cartItems: cartItems,
+        },
+        { withCredentials: true }
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] dark:bg-neutral-950">
       <Nav />
@@ -149,7 +178,6 @@ const Checkout = () => {
             <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-neutral-700">
               <div className="w-full h-64 rounded-lg">
                 <MapContainer
-                  key={`${mapCenter[0]}-${mapCenter[1]}`}
                   center={mapCenter}
                   zoom={16}
                   style={{
@@ -176,6 +204,35 @@ const Checkout = () => {
                 </MapContainer>
               </div>
             </div>
+          </div>
+
+          {/* Payment Method Section */}
+          <div className="mt-6">
+            <PaymentMethod
+              selectedPayment={selectedPayment}
+              onPaymentSelect={setSelectedPayment}
+            />
+          </div>
+
+          {/* Order Summary Section */}
+          <div className="mt-6">
+            <OrderSummary
+              cartItems={cartItems}
+              subtotal={totalAmount}
+              deliveryFee={deliveryFee}
+              total={totalAmount + deliveryFee}
+            />
+          </div>
+
+          {/* Place Order Button */}
+          <div className="mt-6">
+            <button
+              type="button"
+              className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+              onClick={handlePlaceOrder}
+            >
+              Place Order
+            </button>
           </div>
         </div>
       </div>
