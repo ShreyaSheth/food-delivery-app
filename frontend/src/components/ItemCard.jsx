@@ -16,7 +16,6 @@ import { setMyShopData } from "@/redux/ownerSlice";
 const ItemCard = ({ item, onEdit }) => {
   const dispatch = useDispatch();
   const { name, image, category, foodType, price } = item || {};
-  console.log("ITEM", item);
   const isVeg = String(foodType).toLowerCase() === "veg";
   const priceLabel = typeof price === "number" ? price.toFixed(2) : price ?? "";
 

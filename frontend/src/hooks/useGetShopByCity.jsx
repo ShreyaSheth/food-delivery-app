@@ -16,7 +16,6 @@ const useGetShopByCity = () => {
           }
         );
         dispatch(setShopsInCity(result.data));
-        console.log(result.data);
       } catch (error) {
         console.log(
           "Error fetching Shops in current city:",

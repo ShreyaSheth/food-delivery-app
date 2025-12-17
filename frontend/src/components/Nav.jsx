@@ -110,6 +110,7 @@ const Nav = () => {
                 variant="secondary"
                 className="relative hidden cursor-pointer bg-amber-600/40 text-amber-600 hover:text-amber-600 hover:bg-amber-600/50 md:inline-flex"
                 disabled={!myShopData}
+                onClick={() => navigate("/my-orders")}
               >
                 My Orders
                 <span className="absolute -right-2 -top-2 bg-amber-600 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -138,6 +139,7 @@ const Nav = () => {
                 type="button"
                 variant="link"
                 className="hidden cursor-pointer text-amber-700 hover:text-amber-600 md:inline-flex"
+                onClick={() => navigate("/my-orders")}
               >
                 My Orders
               </Button>
@@ -162,24 +164,27 @@ const Nav = () => {
               >
                 {/* On small screens include My Orders inside the menu */}
                 <div className="block md:hidden">
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50">
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-neutral-800"
+                    onClick={() => navigate("/my-orders")}
+                  >
                     My Orders
                   </button>
-                  <div className="mx-2 my-1 h-px bg-gray-100" />
+                  <div className="mx-2 my-1 h-px bg-gray-100 dark:bg-neutral-800" />
                 </div>
 
                 {/* Common options */}
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-neutral-800">
+                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-neutral-800">
                   Profile
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-neutral-800">
+                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-neutral-800">
                   Settings
                 </button>
-                <div className="mx-2 my-1 h-px bg-gray-100" />
+                <div className="mx-2 my-1 h-px bg-gray-100 dark:bg-neutral-800" />
                 <ThemeToggle />
                 <div className="mx-2 my-1 h-px bg-gray-100 dark:bg-neutral-800" />
                 <button
-                  className="w-full px-4 py-2 text-left text-sm text-amber-600 hover:bg-amber-50 dark:hover:bg-neutral-800"
+                  className="w-full px-4 py-2 text-left text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-neutral-800"
                   onClick={handleSignOut}
                 >
                   Logout

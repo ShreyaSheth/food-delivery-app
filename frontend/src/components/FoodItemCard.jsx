@@ -17,7 +17,7 @@ const FoodItemCard = ({ item, onClick }) => {
   const [quantity, setQuantity] = useState(0);
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.user);
-  console.log("CART ITEMS", cartItems);
+
   const handleDecrement = (e) => {
     e.stopPropagation();
     setQuantity((prev) => (prev > 0 ? prev - 1 : 0));

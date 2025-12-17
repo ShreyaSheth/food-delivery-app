@@ -239,7 +239,7 @@ const EditItem = () => {
                           as="select"
                           id="category"
                           name="category"
-                          className={`border rounded-md h-10 px-3 ${
+                          className={`border rounded-md h-10 px-3 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 dark:border-neutral-700 ${
                             errors.category && touched.category
                               ? "border-red-500"
                               : ""
@@ -268,7 +268,7 @@ const EditItem = () => {
                           as="select"
                           id="foodType"
                           name="foodType"
-                          className={`border rounded-md h-10 px-3 ${
+                          className={`border rounded-md h-10 px-3 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 dark:border-neutral-700 ${
                             errors.foodType && touched.foodType
                               ? "border-red-500"
                               : ""

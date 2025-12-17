@@ -55,7 +55,6 @@ const Checkout = () => {
 
   const onDragEnd = (e) => {
     const { lat, lng } = e.target._latlng;
-    console.log("target", lat, lng);
     dispatch(setLocation({ lat, lng }));
     getAddressByLatLng(lat, lng);
   };
@@ -65,7 +64,6 @@ const Checkout = () => {
       const res = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
       );
-      console.log(res.data.results[0]);
       dispatch(setAddress(res.data.results[0].address_line2));
     } catch (error) {
       console.log(error);
@@ -115,7 +113,7 @@ const Checkout = () => {
         },
         { withCredentials: true }
       );
-      console.log(res);
+      if (res.status === 201) navigate("/order-placed");
     } catch (error) {
       console.log(error);
     }

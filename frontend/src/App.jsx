@@ -14,6 +14,9 @@ import Cart from "./pages/Cart";
 import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemsByCity from "./hooks/useGetItemsByCity";
 import Checkout from "./pages/Checkout";
+import OrderPlaced from "./pages/OrderPlaced";
+import MyOrders from "./pages/MyOrders";
+import useGetMyOrders from "./hooks/useGetMyOrders";
 
 export const serverUrl = "http://localhost:8000";
 function App() {
@@ -21,8 +24,8 @@ function App() {
   useGetCity();
   useGetShopByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   useGetItemsByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
+  useGetMyOrders(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   const { userData, loading } = useSelector((state) => state.user);
-  console.log(userData);
 
   if (loading) {
     return (
@@ -69,6 +72,14 @@ function App() {
       <Route
         path="/checkout"
         element={userData ? <Checkout /> : <Navigate to="/signin" />}
+      />
+      <Route
+        path="/order-placed"
+        element={userData ? <OrderPlaced /> : <Navigate to="/signin" />}
+      />
+      <Route
+        path="/my-orders"
+        element={userData ? <MyOrders /> : <Navigate to="/signin" />}
       />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
