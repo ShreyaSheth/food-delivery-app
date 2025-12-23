@@ -28,7 +28,6 @@ export const placeOrder = async (req, res) => {
       }
       groupItemsByShop[shopId].push(item);
     });
-    console.log("groupItemsByShop", groupItemsByShop);
     const shopOrders = await Promise.all(
       Object.keys(groupItemsByShop).map(async (shopId) => {
         const shop = await Shop.findById(shopId).populate("owner");
@@ -40,7 +39,6 @@ export const placeOrder = async (req, res) => {
           (sum, item) => item.price * item.quantity + sum,
           0
         );
-        console.log("subTotal", shop._id, shop.owner._id, subTotal);
         return {
           shop: shop._id,
           owner: shop.owner._id,
@@ -61,6 +59,11 @@ export const placeOrder = async (req, res) => {
       totalAmount,
       shopOrders,
     });
+    await newOrder.populate(
+      "shopOrders.shopOrderItems.item",
+      "name image price"
+    );
+    await newOrder.populate("shopOrders.shop", "name");
     return res
       .status(201)
       .json({ message: "Order placed successfully", newOrder });
@@ -87,6 +90,7 @@ export const getMyOrders = async (req, res) => {
         shopOrders: order.shopOrders.find(
           (shopOrder) => shopOrder.owner._id == req.userId
         ),
+        deliveryAddress: order.deliveryAddress,
         createdAt: order.createdAt,
       }));
       return res.status(200).json(filteredOrders);
@@ -103,5 +107,31 @@ export const getMyOrders = async (req, res) => {
     }
   } catch (error) {
     return res.status(500).json({ message: `Get user orders Error: ${error}` });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId, shopId } = req.params;
+    const { status } = req.body;
+    const order = await Order.findById(orderId);
+    console.log("==>>shopid", shopId);
+    order.shopOrders.map((shopOrder) => {
+      console.log("==>>shopOrder", shopOrder.shop);
+    });
+    const shopOrder = order.shopOrders.find(
+      (shopOrder) => shopOrder.shop == shopId
+    );
+    if (!shopOrder) {
+      return res.status(400).json({ message: "Shop order not found" });
+    }
+    shopOrder.status = status;
+    await shopOrder.save();
+    await order.save();
+    return res.status(200).json(shopOrder.status);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Update order status Error: ${error}` });
   }
 };

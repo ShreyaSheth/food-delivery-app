@@ -1,24 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { FiPhone } from "react-icons/fi";
 import { IoLocationSharp } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import { serverUrl } from "@/App";
+import axios from "axios";
+import { updateOrderStatus } from "@/redux/userSlice";
 
 const OwnerOrderCard = ({ order }) => {
+  const dispatch = useDispatch();
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(null);
   const dropdownRef = useRef(null);
 
   // shopOrders is now a single object (not an array) from the backend
   const shopOrder = order?.shopOrders;
-  console.log("shopOrder===>>", shopOrder);
-  console.log("items===>>", shopOrder.shopOrderItems);
-  // Set initial status
-  useEffect(() => {
-    if (shopOrder?.status) {
-      setCurrentStatus(shopOrder.status);
-    }
-  }, [shopOrder]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -39,18 +34,25 @@ const OwnerOrderCard = ({ order }) => {
     "delivered",
   ];
 
-  const handleStatusChange = async (newStatus) => {
+  const handleStatusChange = async (orderId, shopId, status) => {
     try {
-      // TODO: Implement API endpoint for updating order status
-      // await axios.patch(`${serverUrl}/api/order/update-status`, {
-      //   orderId: order._id,
-      //   shopOrderId: shopOrder._id,
-      //   status: newStatus,
-      // });
-
-      setCurrentStatus(newStatus);
+      const res = await axios.post(
+        `${serverUrl}/api/order/update-order-status/${orderId}/${shopId}`,
+        {
+          status,
+        },
+        { withCredentials: true }
+      );
+      if (res.status === 200) {
+        dispatch(
+          updateOrderStatus({
+            shopId,
+            orderId,
+            status,
+          })
+        );
+      }
       setShowStatusDropdown(false);
-      // Optionally refresh orders after status update
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -165,8 +167,8 @@ const OwnerOrderCard = ({ order }) => {
         <div className="flex items-center gap-4" ref={dropdownRef}>
           <div className="flex items-center gap-1">
             <span className="text-sm font-medium text-red-600 dark:text-red-400">
-              status:{" "}
-              {formatStatus(currentStatus || shopOrder?.status || "pending")}
+              Status: &nbsp;
+              {formatStatus(shopOrder?.status)}
             </span>
           </div>
 
@@ -176,7 +178,7 @@ const OwnerOrderCard = ({ order }) => {
               onClick={() => setShowStatusDropdown(!showStatusDropdown)}
               className="flex items-center gap-1 px-3 py-1.5 border border-red-600 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm font-medium"
             >
-              Change
+              {formatStatus(shopOrder?.status)}
               <IoIosArrowDown
                 className={`transition-transform ${
                   showStatusDropdown ? "rotate-180" : ""
@@ -189,10 +191,11 @@ const OwnerOrderCard = ({ order }) => {
                 {statusOptions.map((status) => (
                   <button
                     key={status}
-                    onClick={() => handleStatusChange(status)}
+                    onClick={() =>
+                      handleStatusChange(order._id, shopOrder.shop._id, status)
+                    }
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-neutral-700 first:rounded-t-lg last:rounded-b-lg transition-colors ${
-                      currentStatus === status ||
-                      (!currentStatus && status === shopOrder?.status)
+                      shopOrder?.status === status
                         ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
                         : "text-gray-700 dark:text-gray-300"
                     }`}

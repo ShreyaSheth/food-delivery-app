@@ -14,6 +14,7 @@ import "leaflet/dist/leaflet.css";
 import { setAddress, setLocation } from "@/redux/mapSlice";
 import axios from "axios";
 import { serverUrl } from "@/App";
+import { addMyRecentOrder } from "@/redux/userSlice";
 
 const apiKey = import.meta.env.VITE_GEO_API_KEY;
 const deliveryFee = 40;
@@ -113,7 +114,11 @@ const Checkout = () => {
         },
         { withCredentials: true }
       );
-      if (res.status === 201) navigate("/order-placed");
+      if (res.status === 201) {
+        console.log("res.data.newOrder", res.data.newOrder);
+        dispatch(addMyRecentOrder(res.data.newOrder));
+        navigate("/order-placed");
+      }
     } catch (error) {
       console.log(error);
     }

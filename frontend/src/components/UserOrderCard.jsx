@@ -30,7 +30,7 @@ const UserOrderCard = ({ order }) => {
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {order?.paymentMethod}
           </p>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 capitalize">
             {order?.shopOrders?.[0]?.status}
           </span>
         </div>
@@ -86,8 +86,8 @@ const UserOrderCard = ({ order }) => {
               <p className="text-base font-medium text-gray-700 dark:text-gray-300">
                 Subtotal: ₹{shopOrder?.subTotal || 0}
               </p>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                {shopOrder?.status || "pending"}
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 capitalize">
+                {shopOrder?.status}
               </span>
             </div>
           </div>
