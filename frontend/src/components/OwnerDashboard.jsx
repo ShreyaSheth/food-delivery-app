@@ -30,7 +30,7 @@ const OwnerDashboard = () => {
               {myShopData.image && (
                 <img
                   src={myShopData.image}
-                  alt={myShopData.name || "Restaurant"}
+                  alt="Restaurant"
                   className="w-full h-48 object-cover"
                 />
               )}

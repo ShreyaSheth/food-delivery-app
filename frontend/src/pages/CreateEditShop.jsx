@@ -144,7 +144,7 @@ const CreateEditShop = () => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
-                          const file = e.target.files[0] || null;
+                          const file = e.target.files[0];
                           console.log("file", file);
                           setFieldValue("image", file);
                           if (file) {

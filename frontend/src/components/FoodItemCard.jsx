@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 
 const FoodItemCard = ({ item, onClick }) => {
-  const { name, image, price, foodType, rating } = item || {};
+  const { name, image, price, foodType, rating } = item;
   const isVeg = String(foodType).toLowerCase() === "veg";
   const [quantity, setQuantity] = useState(0);
   const dispatch = useDispatch();
@@ -103,15 +103,15 @@ const FoodItemCard = ({ item, onClick }) => {
         </div>
         <div className="flex items-center justify-center gap-1 mb-2">
           <div className="flex items-center gap-0.5">
-            {renderStars(rating?.average || 0)}
+            {renderStars(rating?.average)}
           </div>
           <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-            ({rating?.count || 0})
+            ({rating?.count})
           </span>
         </div>
         <div className="flex items-center justify-between gap-2">
           <span className="text-base font-bold text-amber-600 dark:text-amber-400">
-            ₹{typeof price === "number" ? price : price || "N/A"}
+            ₹{price}
           </span>
           <div className="flex items-center gap-0 bg-white dark:bg-neutral-800 rounded-full border border-gray-200 dark:border-neutral-700 px-1 py-0.5">
             <button

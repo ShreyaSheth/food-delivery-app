@@ -10,8 +10,9 @@ import { updateOrderStatus } from "@/redux/userSlice";
 const OwnerOrderCard = ({ order }) => {
   const dispatch = useDispatch();
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [availableBoys, setAvailableBoys] = useState(false);
   const dropdownRef = useRef(null);
-
+  console.log("available boys", availableBoys);
   // shopOrders is now a single object (not an array) from the backend
   const shopOrder = order?.shopOrders;
 
@@ -43,6 +44,8 @@ const OwnerOrderCard = ({ order }) => {
         },
         { withCredentials: true }
       );
+      setAvailableBoys("res.data", res.data);
+      setAvailableBoys(res.data.availableBoys);
       if (res.status === 200) {
         dispatch(
           updateOrderStatus({
@@ -66,7 +69,7 @@ const OwnerOrderCard = ({ order }) => {
   };
 
   const customerName = order?.user
-    ? `${order.user.firstName || ""} ${order.user.lastName || ""}`.trim()
+    ? `${order.user.firstName} ${order.user.lastName}`.trim()
     : "Customer";
 
   return (
@@ -78,23 +81,18 @@ const OwnerOrderCard = ({ order }) => {
         </h2>
 
         <div className="space-y-3">
-          {/* Email */}
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {order?.user?.email || "N/A"}
+            {order?.user?.email}
           </p>
 
-          {/* Phone Number */}
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <FiPhone className="text-gray-500 dark:text-gray-400" />
-            <span>{order?.user?.mobile || "N/A"}</span>
+            <span>{order?.user?.mobile}</span>
           </div>
 
-          {/* Address */}
           <div className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
             <IoLocationSharp className="text-gray-500 dark:text-gray-400 mt-0.5 flex-shrink-0" />
-            <span>
-              {order?.deliveryAddress?.text || "Address not available"}
-            </span>
+            <span>{order?.deliveryAddress?.text}</span>
           </div>
 
           {/* Coordinates */}
@@ -107,18 +105,15 @@ const OwnerOrderCard = ({ order }) => {
             )}
         </div>
       </div>
-      {console.log("==>>shopOrder outside", shopOrder)}
 
       {/* Ordered Items Section */}
       {shopOrder?.shopOrderItems?.length > 0 && (
         <div className="mb-6">
           <div className="space-y-4">
-            {console.log("==>>shopOrder", shopOrder)}
-            {console.log("shopOrder shoporderitems", shopOrder.shopOrderItems)}
             {shopOrder.shopOrderItems.map((orderItem, itemIndex) => {
               const itemImage = orderItem?.item?.image;
-              const itemName = orderItem?.item?.name || orderItem?.name;
-              const itemPrice = orderItem?.item?.price || orderItem?.price;
+              const itemName = orderItem?.item?.name;
+              const itemPrice = orderItem?.item?.price;
               const quantity = orderItem?.quantity;
               console.log("orderItem", orderItem);
 
@@ -207,10 +202,38 @@ const OwnerOrderCard = ({ order }) => {
             )}
           </div>
         </div>
+        {shopOrder?.status === "out for delivery" && (
+          <div className="mt-4 p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30">
+            <p className="font-medium text-amber-800 dark:text-amber-200 mb-3">
+              Available delivery boys
+            </p>
+            {availableBoys.length > 0 ? (
+              <div className="space-y-2">
+                {availableBoys.map((boy) => (
+                  <div
+                    key={boy.id}
+                    className="flex items-center justify-between p-2 rounded-md bg-white dark:bg-neutral-800 border border-amber-100 dark:border-neutral-700"
+                  >
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {boy.firstName} {boy.lastName}
+                    </span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {boy.mobile}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-amber-700 dark:text-amber-300 italic">
+                Waiting for available delivery boys...
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Total Amount */}
         <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Total: ₹{shopOrder?.subTotal || 0}
+          Total: ₹{shopOrder?.subTotal}
         </p>
       </div>
     </div>

@@ -21,7 +21,9 @@ const useGetCity = () => {
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
       );
       console.log(res.data.results[0]);
-      dispatch(setCurrentCity(res.data.results[0].city));
+      dispatch(
+        setCurrentCity(res.data.results[0].city || res.data.results[0].county)
+      );
       dispatch(setCurrentState(res.data.results[0].state));
       dispatch(
         setCurrentAddress(

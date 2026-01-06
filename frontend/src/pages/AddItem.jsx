@@ -1,7 +1,7 @@
 import { serverUrl } from "@/App";
 import axios from "axios";
 import React, { useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -188,7 +188,7 @@ const AddItem = () => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
-                          const file = e.target.files[0] || null;
+                          const file = e.target.files[0];
                           setFieldValue("image", file);
                         }}
                       />

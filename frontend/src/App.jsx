@@ -17,6 +17,7 @@ import Checkout from "./pages/Checkout";
 import OrderPlaced from "./pages/OrderPlaced";
 import MyOrders from "./pages/MyOrders";
 import useGetMyOrders from "./hooks/useGetMyOrders";
+import useUpdateLocation from "./hooks/useUpdateLocation";
 
 export const serverUrl = "http://localhost:8000";
 function App() {
@@ -25,6 +26,7 @@ function App() {
   useGetShopByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   useGetItemsByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   useGetMyOrders(); // TODO: Check if we can move this to useEffect in user dashboard page itself
+  useUpdateLocation(); // TODO: Check if we can move this to useEffect in user dashboard page itself
   const { userData, loading } = useSelector((state) => state.user);
 
   if (loading) {

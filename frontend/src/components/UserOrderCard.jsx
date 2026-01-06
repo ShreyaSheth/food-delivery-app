@@ -20,7 +20,7 @@ const UserOrderCard = ({ order }) => {
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-neutral-700">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-            Order #{orderNumber || ""}
+            Order #{orderNumber}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Date: {formatDate(order?.createdAt)}
@@ -43,7 +43,7 @@ const UserOrderCard = ({ order }) => {
             className="border-b border-gray-200 dark:border-neutral-700 pb-6 last:border-b-0 last:pb-0"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-              {shopOrder?.shop?.name || "Restaurant"}
+              {shopOrder?.shop?.name}
             </h3>
 
             <div className="space-y-4 mb-4">
@@ -51,7 +51,7 @@ const UserOrderCard = ({ order }) => {
                 const itemImage = orderItem?.item?.image;
                 const itemName = orderItem?.item?.name;
                 const itemPrice = orderItem?.item?.price;
-                const quantity = orderItem?.quantity || 0;
+                const quantity = orderItem?.quantity;
 
                 return (
                   <div
@@ -84,7 +84,7 @@ const UserOrderCard = ({ order }) => {
 
             <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
               <p className="text-base font-medium text-gray-700 dark:text-gray-300">
-                Subtotal: ₹{shopOrder?.subTotal || 0}
+                Subtotal: ₹{shopOrder?.subTotal}
               </p>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 capitalize">
                 {shopOrder?.status}
@@ -96,7 +96,7 @@ const UserOrderCard = ({ order }) => {
 
       <div className="flex items-center justify-between pt-4 border-t-2 border-gray-300 dark:border-neutral-600">
         <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Total: ₹{order?.totalAmount || 0}
+          Total: ₹{order?.totalAmount}
         </p>
         <button
           onClick={() => navigate(`/track-order/${order?._id}`)}

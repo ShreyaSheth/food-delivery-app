@@ -20,7 +20,7 @@ const OrderSummary = ({ cartItems, subtotal, deliveryFee, total }) => {
                   {item.name} x {item.quantity}
                 </span>
                 <span className="text-gray-900 dark:text-gray-100 font-medium">
-                  ₹{((item.price || 0) * (item.quantity || 0)).toFixed(2)}
+                  ₹{(item.price * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
@@ -41,7 +41,7 @@ const OrderSummary = ({ cartItems, subtotal, deliveryFee, total }) => {
               Delivery Fee
             </span>
             <span className="text-gray-900 dark:text-gray-100 font-medium">
-              ₹{deliveryFee?.toFixed(2) || "40.00"}
+              ₹{deliveryFee?.toFixed(2)}
             </span>
           </div>
 

@@ -217,7 +217,7 @@ const EditItem = () => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
-                          const file = e.target.files[0] || null;
+                          const file = e.target.files[0];
                           setFieldValue("image", file);
                         }}
                       />
@@ -227,7 +227,7 @@ const EditItem = () => {
                       <div>
                         <ImagePreview
                           file={values.image}
-                          fallbackUrl={formData?.image || null}
+                          fallbackUrl={formData?.image}
                         />
                       </div>
                     </div>
