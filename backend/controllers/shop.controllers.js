@@ -39,7 +39,8 @@ export const createEditShop = async (req, res) => {
     ]);
     return res.status(201).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `Create Shop Error ${error}` });
+    console.error("Create Shop Error:", error);
+    return res.status(500).json({ message: `Create Shop Error: ${error.message}` });
   }
 };
 
@@ -54,7 +55,8 @@ export const getMyShop = async (req, res) => {
     }
     return res.status(200).json(shop);
   } catch (error) {
-    return res.status(500).json({ message: `Get Shop Error ${error}` });
+    console.error("Get Shop Error:", error);
+    return res.status(500).json({ message: `Get Shop Error: ${error.message}` });
   }
 };
 
@@ -69,6 +71,7 @@ export const getShopByCity = async (req, res) => {
     }
     return res.status(200).json(shops);
   } catch (error) {
-    return res.status(500).json({ message: `Get Shop by City Error ${error}` });
+    console.error("Get Shop by City Error:", error);
+    return res.status(500).json({ message: `Get Shop by City Error: ${error.message}` });
   }
 };

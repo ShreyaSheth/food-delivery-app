@@ -23,10 +23,10 @@ export const serverUrl = "http://localhost:8000";
 function App() {
   useGetCurrentUser();
   useGetCity();
-  useGetShopByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
-  useGetItemsByCity(); // TODO: Check if we can move this to useEffect in user dashboard page itself
-  useGetMyOrders(); // TODO: Check if we can move this to useEffect in user dashboard page itself
-  useUpdateLocation(); // TODO: Check if we can move this to useEffect in user dashboard page itself
+  useGetShopByCity();
+  useGetItemsByCity();
+  useGetMyOrders();
+  useUpdateLocation();
   const { userData, loading } = useSelector((state) => state.user);
 
   if (loading) {
