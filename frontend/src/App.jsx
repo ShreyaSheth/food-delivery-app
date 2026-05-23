@@ -19,7 +19,7 @@ import MyOrders from "./pages/MyOrders";
 import useGetMyOrders from "./hooks/useGetMyOrders";
 import useUpdateLocation from "./hooks/useUpdateLocation";
 
-export const serverUrl = "http://localhost:8000";
+export const serverUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
 function App() {
   useGetCurrentUser();
   useGetCity();
